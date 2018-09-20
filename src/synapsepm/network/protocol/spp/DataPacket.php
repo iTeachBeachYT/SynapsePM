@@ -1,23 +1,25 @@
 <?php
 declare(strict_types=1);
+
 namespace synapsepm\network\protocol\spp;
 
-use pocketmine\utils\BinaryStream;
+use pocketmine\network\mcpe\NetworkBinaryStream;
 
 
-abstract class DataPacket extends BinaryStream {
-	const NETWORK_ID = 0;
+abstract class DataPacket extends NetworkBinaryStream {
 
-	public function pid() {
-		return $this::NETWORK_ID;
-	}
+    const NETWORK_ID = 0;
 
-	abstract public function encode();
+    public function pid(): int {
+        return $this::NETWORK_ID;
+    }
 
-	abstract public function decode();
+    abstract public function encode();
 
-	public function reset() {
-		$this->buffer = chr($this::NETWORK_ID);
-		$this->offset = 0;
-	}
+    abstract public function decode();
+
+    public function reset() {
+        $this->buffer = chr($this::NETWORK_ID);
+        $this->offset = 0;
+    }
 }

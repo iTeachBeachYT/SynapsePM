@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace synapsepm;
 
 use pocketmine\event\Listener;
@@ -8,13 +9,13 @@ use pocketmine\network\mcpe\RakLibInterface;
 
 
 class DisableRakListener implements Listener {
-	/**
-	 * @param NetworkInterfaceRegisterEvent $event
-	 * @ignoreCancelled true
-	 */
-	public function onNetworkInterfaceRegister(NetworkInterfaceRegisterEvent $event) {
-		if ($event->getInterface() instanceof RakLibInterface) {
-			$event->setCancelled();
-		}
-	}
+    /**
+     * @param NetworkInterfaceRegisterEvent $event
+     * @ignoreCancelled true
+     */
+    public function onNetworkInterfaceRegister(NetworkInterfaceRegisterEvent $event) {
+        if ($event->getInterface() instanceof RakLibInterface) {
+            $event->setCancelled();
+        }
+    }
 }

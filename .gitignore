@@ -45,3 +45,6 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+/.idea/
+/PocketMine-MP.phar
+/SynapsePM.iml
