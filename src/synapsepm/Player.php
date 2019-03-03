@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace synapsepm;
 
 use pocketmine\level\Level;
+use pocketmine\network\mcpe\protocol\AvailableEntityIdentifiersPacket;
 use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\mcpe\protocol\EntityEventPacket;
 use pocketmine\network\mcpe\protocol\FullChunkDataPacket;
@@ -32,6 +33,8 @@ class Player extends PMPlayer {
     public function __construct(SynLibInterface $interface, $ip, $port) {
         parent::__construct($interface, $ip, $port);
         $this->synapse = $interface->getSynapse();
+
+//        $this->sessionAdapter = new SynapsePlayerNetworkSessionAdapter($this->server, $this);
     }
 
     public function handleLoginPacket(PlayerLoginPacket $packet) {
@@ -68,7 +71,7 @@ class Player extends PMPlayer {
     public function handleDataPacket(DataPacket $packet) {
         $this->lastPacketTime = microtime(true);
 
-        if ($packet->pid() == ProtocolInfo::MOVE_PLAYER_PACKET && $this->id === null) {
+        if ($packet->pid() == ProtocolInfo::MOVE_PLAYER_PACKET && empty($this->id)) {
 //            $pk = new MovePlayerPacket();
 //            $pk->entityRuntimeId = PHP_INT_MAX;
 //            $pk->position = $this->getOffsetPosition($this);
@@ -104,7 +107,7 @@ class Player extends PMPlayer {
 
     protected function processPacket(DataPacket $packet): bool {
         if (!$this->isFirstTimeLogin) {
-            if ($packet instanceof PlayStatusPacket && $packet->status === PlayStatusPacket::PLAYER_SPAWN) {
+            if (!$this->spawned && $packet instanceof PlayStatusPacket && $packet->status === PlayStatusPacket::PLAYER_SPAWN) {
                 return true;
             }
 
@@ -113,7 +116,7 @@ class Player extends PMPlayer {
                 return true;
             }
 
-            if ($packet instanceof StartGamePacket) {
+            if ($packet instanceof StartGamePacket || $packet instanceof AvailableEntityIdentifiersPacket) {
                 return true;
             }
         } else {
@@ -163,6 +166,7 @@ class Player extends PMPlayer {
         $this->sendGamemode();
         $this->setViewDistance($this->server->getViewDistance()); //TODO: save view distance in nemisys
 
+        $this->doFirstSpawn();
         return $r;
     }
 

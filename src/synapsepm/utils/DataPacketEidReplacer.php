@@ -24,7 +24,6 @@ final class DataPacketEidReplacer {
             case ProtocolInfo::ADD_PLAYER_PACKET:
             case ProtocolInfo::ADD_ENTITY_PACKET:
             case ProtocolInfo::ADD_ITEM_ENTITY_PACKET:
-            case ProtocolInfo::ADD_HANGING_ENTITY_PACKET:
                 self::replaceMetadata($packet->metadata, $from, $to);
                 break;
             case ProtocolInfo::ANIMATE_PACKET:
