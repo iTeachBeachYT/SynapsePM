@@ -9,9 +9,11 @@ use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\mcpe\protocol\EntityEventPacket;
 use pocketmine\network\mcpe\protocol\FullChunkDataPacket;
 use pocketmine\network\mcpe\protocol\MobEffectPacket;
+use pocketmine\network\mcpe\protocol\MoveEntityAbsolutePacket;
 use pocketmine\network\mcpe\protocol\PlayStatusPacket;
 use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\ResourcePacksInfoPacket;
+use pocketmine\network\mcpe\protocol\SetEntityMotionPacket;
 use pocketmine\network\mcpe\protocol\StartGamePacket;
 use pocketmine\Player as PMPlayer;
 use pocketmine\utils\UUID;
@@ -158,6 +160,37 @@ class Player extends PMPlayer {
         }
 
         $this->server->broadcastPacket($players, $pk);
+    }
+
+    protected function broadcastMotion(): void {
+        $pk = new SetEntityMotionPacket();
+        $pk->entityRuntimeId = PHP_INT_MAX;
+        $pk->motion = $this->getMotion();
+
+        $this->sendDataPacket($pk);
+
+        parent::broadcastMotion();
+    }
+
+    protected function broadcastMovement(bool $teleport = false): void {
+        $pk = new MoveEntityAbsolutePacket();
+        $pk->entityRuntimeId = PHP_INT_MAX;
+        $pk->position = $this->getOffsetPosition($this);
+
+        //this looks very odd but is correct as of 1.5.0.7
+        //for arrows this is actually x/y/z rotation
+        //for mobs x and z are used for pitch and yaw, and y is used for headyaw
+        $pk->xRot = $this->pitch;
+        $pk->yRot = $this->yaw; //TODO: head yaw
+        $pk->zRot = $this->yaw;
+
+        if ($teleport) {
+            $pk->flags |= MoveEntityAbsolutePacket::FLAG_TELEPORT;
+        }
+
+        $this->sendDataPacket($pk);
+
+        parent::broadcastMovement($teleport);
     }
 
     protected function completeLoginSequence() {
