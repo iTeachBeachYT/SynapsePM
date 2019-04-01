@@ -41,7 +41,8 @@ class Player extends PMPlayer {
 
     public function handleLoginPacket(PlayerLoginPacket $packet) {
         $this->isFirstTimeLogin = $packet->isFirstTime;
-        $this->server->getPluginManager()->callEvent($ev = new PlayerConnectEvent($this, $this->isFirstTimeLogin));
+        (new PlayerConnectEvent($this, $this->isFirstTimeLogin))->call();
+
         $loginPacket = $this->synapse->getPacket($packet->cachedLoginPacket);
 
         if ($loginPacket === null) {
@@ -191,6 +192,32 @@ class Player extends PMPlayer {
         $this->sendDataPacket($pk);
 
         parent::broadcastMovement($teleport);
+    }
+
+    public function handleEntityEvent(EntityEventPacket $packet): bool {
+        if (!$this->spawned or !$this->isAlive()) {
+            return true;
+        }
+        $this->doCloseInventory();
+
+        switch ($packet->event) {
+            case EntityEventPacket::EATING_ITEM:
+                if ($packet->data === 0) {
+                    return false;
+                }
+
+                $selfPacket = clone $packet;
+                $selfPacket->entityRuntimeId = PHP_INT_MAX;
+                $selfPacket->isEncoded = false;
+
+                $this->dataPacket($selfPacket);
+                $this->server->broadcastPacket($this->getViewers(), $packet);
+                break;
+            default:
+                return parent::handleEntityEvent($packet);
+        }
+
+        return true;
     }
 
     protected function completeLoginSequence() {
