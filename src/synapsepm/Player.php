@@ -206,12 +206,12 @@ class Player extends PMPlayer {
                     return false;
                 }
 
-                $selfPacket = clone $packet;
-                $selfPacket->entityRuntimeId = PHP_INT_MAX;
-                $selfPacket->isEncoded = false;
+                $broadcastPacket = clone $packet;
+                $broadcastPacket->entityRuntimeId = PHP_INT_MAX;
+                $broadcastPacket->isEncoded = false;
 
-                $this->dataPacket($selfPacket);
-                $this->server->broadcastPacket($this->getViewers(), $packet);
+                $this->dataPacket($packet);
+                $this->server->broadcastPacket($this->getViewers(), $broadcastPacket);
                 break;
             default:
                 return parent::handleEntityEvent($packet);
