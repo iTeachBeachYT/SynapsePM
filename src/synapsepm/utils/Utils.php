@@ -8,6 +8,8 @@ use pocketmine\utils\MainLogger;
 
 class Utils {
 
+    const NUKKIT_RUNTIMEID_TABLE = "https://raw.githubusercontent.com/NukkitX/Nukkit/master/src/main/resources/runtimeid_table.json";
+
     public static function initBlockRuntimeIdMapping() {
         try {
             $reflect = new \ReflectionClass(RuntimeBlockMapping::class);
@@ -22,19 +24,21 @@ class Utils {
             $registerMapping = $reflect->getMethod("registerMapping");
             $registerMapping->setAccessible(true);
 
-            $legacyIdMap = json_decode(file_get_contents(\pocketmine\RESOURCE_PATH . "legacy_id_map.json"), true);
+            $runtimeIdMap = json_decode(file_get_contents(self::NUKKIT_RUNTIMEID_TABLE, false, stream_context_create(
+                [
+                    "ssl" => [
+                        "verify_peer" => false,
+                        "verify_peer_name" => false,
+                    ]
+                ]
+            )), true);
 
-            $bedrockKnownStates->setValue(json_decode(file_get_contents(\pocketmine\RESOURCE_PATH . "runtimeid_table.json"), true));
+            $bedrockKnownStates->setValue($runtimeIdMap);
             $runtimeToLegacyMap->setValue([]);
             $legacyToRuntimeMap->setValue([]);
 
-            foreach ($bedrockKnownStates->getValue() as $k => $obj) {
-                //this has to use the json offset to make sure the mapping is consistent with what we send over network, even though we aren't using all the entries
-                if (!isset($legacyIdMap[$obj["name"]])) {
-                    continue;
-                }
-
-                $registerMapping->invokeArgs(null, [$k, $legacyIdMap[$obj["name"]], $obj["data"]]);
+            foreach ($runtimeIdMap as $k => $obj) {
+                $registerMapping->invokeArgs(null, [$k, $obj['id'], $obj['data']]);
             }
 
         } catch (\ReflectionException $e) {
