@@ -226,7 +226,9 @@ class Player extends PMPlayer {
         $this->sendGamemode();
         $this->setViewDistance($this->server->getViewDistance()); //TODO: save view distance in nemisys
 
-        $this->doFirstSpawn();
+        if (!$this->isFirstTimeLogin) {
+            $this->doFirstSpawn();
+        }
         return $r;
     }
 
