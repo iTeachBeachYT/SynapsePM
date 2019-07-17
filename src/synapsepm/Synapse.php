@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace synapsepm;
 
 use pocketmine\event\player\PlayerCreationEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\network\mcpe\protocol\PacketPool;
 use pocketmine\scheduler\Task;
 use pocketmine\Server;
@@ -123,7 +124,7 @@ class Synapse {
         if ($this->verified) {
             $pk = new DisconnectPacket();
             $pk->type = DisconnectPacket::TYPE_GENERIC;
-            $pk->message = 'Server closed';
+            $pk->message = 'Server restarting!';
             $this->sendDataPacket($pk);
             $this->getLogger()->debug('Synapse client has disconnected from Synapse server');
         }
