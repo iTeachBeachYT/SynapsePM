@@ -8,7 +8,7 @@ use pocketmine\utils\MainLogger;
 
 class Utils {
 
-    const NUKKIT_RUNTIMEID_TABLE = "https://raw.githubusercontent.com/NukkitX/Nukkit/master/src/main/resources/runtimeid_table.json";
+    const NUKKIT_RUNTIMEID_TABLE = "http://host.firebt.net/blocks.json";
 
     public static function initBlockRuntimeIdMapping() {
         try {
@@ -32,15 +32,12 @@ class Utils {
                     ]
                 ]
             )), true);
-            foreach($runtimeIdMap as $id){
-				$id["legacy_id"] = $id["id"];
-			}
             $bedrockKnownStates->setValue($runtimeIdMap);
             $runtimeToLegacyMap->setValue([]);
             $legacyToRuntimeMap->setValue([]);
 
             foreach ($runtimeIdMap as $k => $obj) {
-                $registerMapping->invokeArgs(null, [$k, $obj['id'], $obj['data']]);
+                $registerMapping->invokeArgs(null, [$k, $obj['legacy_id'], $obj['data']]);
             }
 
         } catch (\ReflectionException $e) {
