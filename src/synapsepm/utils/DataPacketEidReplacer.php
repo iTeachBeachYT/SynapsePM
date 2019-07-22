@@ -23,7 +23,6 @@ final class DataPacketEidReplacer {
         switch ($packet->pid()) {
             case ProtocolInfo::ADD_PLAYER_PACKET:
             case ProtocolInfo::ADD_ACTOR_PACKET:
-            case ProtocolInfo::ADD_ENTITY_PACKET:
             case ProtocolInfo::ADD_ITEM_ACTOR_PACKET:
                 self::replaceMetadata($packet->metadata, $from, $to);
                 break;
