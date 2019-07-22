@@ -202,6 +202,10 @@ class SynapseClient extends Thread {
         return $this->logger;
     }
 
+    public function setGarbage() {
+
+    }
+
     public function isGarbage(): bool {
         return parent::isGarbage();
     }
