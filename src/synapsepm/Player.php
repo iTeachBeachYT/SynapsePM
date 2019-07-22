@@ -94,7 +94,7 @@ class Player extends PMPlayer {
 
     public function onUpdate(int $currentTick): bool {
         if ((microtime(true) - $this->lastPacketTime) >= 5 * 60) {
-            $this->close('', 'Kicked by Server reason: AFK');
+            $this->close('', 'timeout');
 
             return false;
         }
