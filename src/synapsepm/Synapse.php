@@ -124,7 +124,7 @@ class Synapse {
         if ($this->verified) {
             $pk = new DisconnectPacket();
             $pk->type = DisconnectPacket::TYPE_GENERIC;
-            $pk->message = 'Server restarting!';
+            $pk->message = 'Server closed';
             $this->sendDataPacket($pk);
             $this->getLogger()->debug('Synapse client has disconnected from Synapse server');
         }
