@@ -32,7 +32,6 @@ class Utils {
                     ]
                 ]
             )), true);
-          
             $bedrockKnownStates->setValue($runtimeIdMap);
             $runtimeToLegacyMap->setValue([]);
             $legacyToRuntimeMap->setValue([]);
