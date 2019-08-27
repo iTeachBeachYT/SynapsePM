@@ -5,10 +5,9 @@ namespace synapsepm\utils;
 
 use pocketmine\network\mcpe\protocol\types\RuntimeBlockMapping;
 use pocketmine\utils\MainLogger;
+use pocketmine\Server;
 
 class Utils {
-
-    const NUKKIT_RUNTIMEID_TABLE = "http://host.firebt.net/blocks.json";
 
     public static function initBlockRuntimeIdMapping() {
         try {
@@ -24,7 +23,7 @@ class Utils {
             $registerMapping = $reflect->getMethod("registerMapping");
             $registerMapping->setAccessible(true);
 
-            $runtimeIdMap = json_decode(file_get_contents(self::NUKKIT_RUNTIMEID_TABLE, false, stream_context_create(
+            runtimeIdMap = json_decode(file_get_contents(Server::getInstance()->getDataPath()."/plugin_data/SynapsePM/blocks.json", false, stream_context_create(
                 [
                     "ssl" => [
                         "verify_peer" => false,
@@ -32,6 +31,7 @@ class Utils {
                     ]
                 ]
             )), true);
+
             $bedrockKnownStates->setValue($runtimeIdMap);
             $runtimeToLegacyMap->setValue([]);
             $legacyToRuntimeMap->setValue([]);
