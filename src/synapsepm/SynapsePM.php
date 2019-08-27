@@ -16,6 +16,10 @@ class SynapsePM extends PluginBase {
     private $useLoadingScreen;
 
     public function onLoad() {
+        if(!file_exists($this->getDataFolder()."blocks.json")){
+            $this->saveResource("blocks.json"); 
+        }
+        
         @RuntimeBlockMapping::fromStaticRuntimeId(0); //init the mappings
 
         Utils::initBlockRuntimeIdMapping();
