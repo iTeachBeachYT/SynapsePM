@@ -25,22 +25,26 @@ class Utils {
             $registerMapping->setAccessible(true);
 
             $runtimeIdMap = json_decode(file_get_contents(self::NUKKIT_RUNTIMEID_TABLE, false, stream_context_create(
-                [
-                    "ssl" => [
-                        "verify_peer" => false,
-                        "verify_peer_name" => false,
-                    ]
-                ]
-            )), true);
-
-            $bedrockKnownStates->setValue($runtimeIdMap);
-            $runtimeToLegacyMap->setValue([]);
-            $legacyToRuntimeMap->setValue([]);
-
-            foreach ($runtimeIdMap as $k => $obj) {
-                $registerMapping->invokeArgs(null, [$k, $obj['id'], $obj['data']]);
-            }
-
+					[
+						"ssl" => [
+							"verify_peer" => false,
+							"verify_peer_name" => false,
+						]
+					]
+			)), true);
+            
+			foreach(array_keys($runtimeIdMap) as $id){
+				$runtimeIdMap[$id]["legacy_id"] = $runtimeIdMap[$id]["id"];
+			}
+            
+			$bedrockKnownStates->setValue($runtimeIdMap);
+			$runtimeToLegacyMap->setValue([]);
+			$legacyToRuntimeMap->setValue([]);
+            
+			foreach ($runtimeIdMap as $k => $obj) {
+				$registerMapping->invokeArgs(null, [$k, $obj['id'], $obj['data']]);
+			}
+            
         } catch (\ReflectionException $e) {
             MainLogger::getLogger()->logException($e);
         }
