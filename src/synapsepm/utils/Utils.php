@@ -23,7 +23,7 @@ class Utils {
             $registerMapping = $reflect->getMethod("registerMapping");
             $registerMapping->setAccessible(true);
 
-            runtimeIdMap = json_decode(file_get_contents(Server::getInstance()->getDataPath()."/plugin_data/SynapsePM/blocks.json", false, stream_context_create(
+            $runtimeIdMap = json_decode(file_get_contents(Server::getInstance()->getDataPath()."/plugin_data/SynapsePM/blocks.json", false, stream_context_create(
                 [
                     "ssl" => [
                         "verify_peer" => false,
